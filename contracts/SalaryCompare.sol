@@ -23,6 +23,7 @@ contract SalaryCompare is SepoliaConfig {
     // Events
     event SalarySubmitted(address indexed user);
     event SalaryCompared(address indexed user1, address indexed user2);
+    event SalaryUpdated(address indexed user);
     
     /// @notice Submit an encrypted salary
     /// @param inputEuint32 the encrypted salary value
@@ -101,14 +102,46 @@ contract SalaryCompare is SepoliaConfig {
     /// @param inputProof the input proof
     function updateSalary(externalEuint32 inputEuint32, bytes calldata inputProof) external {
         euint32 encryptedSalary = FHE.fromExternal(inputEuint32, inputProof);
-        
+
         salaries[msg.sender] = encryptedSalary;
         hasSalary[msg.sender] = true;
-        
+
         FHE.allowThis(encryptedSalary);
         FHE.allow(encryptedSalary, msg.sender);
-        
-        emit SalarySubmitted(msg.sender);
+
+        emit SalaryUpdated(msg.sender);
+    }
+
+    /// @notice Batch compare salaries with multiple users
+    /// @param otherUsers Array of user addresses to compare with
+    /// @dev Performs comparison with each user in the array
+    function batchCompareSalaries(address[] calldata otherUsers) external {
+        require(hasSalary[msg.sender], "You have not submitted a salary yet");
+
+        for (uint256 i = 0; i < otherUsers.length; i++) {
+            address otherUser = otherUsers[i];
+            require(hasSalary[otherUser], "One of the other users has not submitted a salary yet");
+            require(msg.sender != otherUser, "Cannot compare with yourself");
+
+            // Skip if comparison already performed
+            if (comparisonPerformed[msg.sender][otherUser]) {
+                continue;
+            }
+
+            // Compare: is msg.sender's salary greater than otherUser's salary?
+            ebool isGreater = FHE.gt(salaries[msg.sender], salaries[otherUser]);
+
+            // Store the result
+            comparisonResults[msg.sender][otherUser] = isGreater;
+            comparisonPerformed[msg.sender][otherUser] = true;
+
+            // Allow both users and the contract to access the result
+            FHE.allowThis(isGreater);
+            FHE.allow(isGreater, msg.sender);
+            FHE.allow(isGreater, otherUser);
+
+            emit SalaryCompared(msg.sender, otherUser);
+        }
     }
 }
 
