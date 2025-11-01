@@ -13,6 +13,8 @@ Encrypted Salary Compare allows two colleagues to compare their salaries without
 - **Encrypted Results**: Get comparison results that only you can decrypt
 - **Rainbow Wallet Integration**: Easy wallet connection with modern UI
 - **Full Privacy**: All sensitive data remains encrypted throughout the entire process
+- **Real-time Notifications**: Get instant feedback on comparison status
+- **Multi-network Support**: Works on Sepolia testnet and local Hardhat network
 
 ## 🛠️ Technology Stack
 
