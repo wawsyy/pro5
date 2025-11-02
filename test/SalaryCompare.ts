@@ -266,5 +266,95 @@ describe("SalaryCompare", function () {
         .getComparisonResult(signers.alice.address, signers.bob.address)
     ).to.be.revertedWith("You can only view comparisons you are part of");
   });
+
+  it("should allow batch salary comparison with multiple users", async function () {
+    // Alice submits salary ($50,000)
+    const aliceSalary = 50000;
+    const encryptedAliceSalary = await fhevm
+      .createEncryptedInput(salaryCompareContractAddress, signers.alice.address)
+      .add32(aliceSalary)
+      .encrypt();
+
+    let tx = await salaryCompareContract
+      .connect(signers.alice)
+      .submitSalary(encryptedAliceSalary.handles[0], encryptedAliceSalary.inputProof);
+    await tx.wait();
+
+    // Bob submits salary ($60,000)
+    const bobSalary = 60000;
+    const encryptedBobSalary = await fhevm
+      .createEncryptedInput(salaryCompareContractAddress, signers.bob.address)
+      .add32(bobSalary)
+      .encrypt();
+
+    tx = await salaryCompareContract
+      .connect(signers.bob)
+      .submitSalary(encryptedBobSalary.handles[0], encryptedBobSalary.inputProof);
+    await tx.wait();
+
+    // Deployer submits salary ($40,000)
+    const deployerSalary = 40000;
+    const encryptedDeployerSalary = await fhevm
+      .createEncryptedInput(salaryCompareContractAddress, signers.deployer.address)
+      .add32(deployerSalary)
+      .encrypt();
+
+    tx = await salaryCompareContract
+      .connect(signers.deployer)
+      .submitSalary(encryptedDeployerSalary.handles[0], encryptedDeployerSalary.inputProof);
+    await tx.wait();
+
+    // Alice performs batch comparison with Bob and Deployer
+    tx = await salaryCompareContract
+      .connect(signers.alice)
+      .batchCompareSalaries([signers.bob.address, signers.deployer.address]);
+    await tx.wait();
+
+    // Verify Alice earns more than Deployer (50k > 40k)
+    const aliceVsDeployerResult = await fhevm.decryptBool(
+      await salaryCompareContract
+        .connect(signers.alice)
+        .getComparisonResult(signers.alice.address, signers.deployer.address)
+    );
+    expect(aliceVsDeployerResult).to.equal(true);
+
+    // Verify Alice earns less than Bob (50k < 60k)
+    const aliceVsBobResult = await fhevm.decryptBool(
+      await salaryCompareContract
+        .connect(signers.alice)
+        .getComparisonResult(signers.alice.address, signers.bob.address)
+    );
+    expect(aliceVsBobResult).to.equal(false);
+  });
+
+  it("should emit SalaryUpdated event when updating salary", async function () {
+    // First submit salary
+    const initialSalary = 50000;
+    const encryptedInitialSalary = await fhevm
+      .createEncryptedInput(salaryCompareContractAddress, signers.alice.address)
+      .add32(initialSalary)
+      .encrypt();
+
+    let tx = await salaryCompareContract
+      .connect(signers.alice)
+      .submitSalary(encryptedInitialSalary.handles[0], encryptedInitialSalary.inputProof);
+    await tx.wait();
+
+    // Now update salary
+    const updatedSalary = 60000;
+    const encryptedUpdatedSalary = await fhevm
+      .createEncryptedInput(salaryCompareContractAddress, signers.alice.address)
+      .add32(updatedSalary)
+      .encrypt();
+
+    // Update should emit SalaryUpdated event
+    await expect(
+      salaryCompareContract
+        .connect(signers.alice)
+        .updateSalary(encryptedUpdatedSalary.handles[0], encryptedUpdatedSalary.inputProof)
+    )
+      .to.emit(salaryCompareContract, "SalaryUpdated")
+      .withArgs(signers.alice.address);
+  });
 });
 
