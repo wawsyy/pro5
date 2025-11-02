@@ -58,6 +58,13 @@ const config: HardhatUserConfig = {
       accounts: normalizedPrivateKey ? [normalizedPrivateKey] : [],
       chainId: 11155111,
       url: `https://sepolia.infura.io/v3/${INFURA_API_KEY}`,
+      gasPrice: 20000000000, // 20 gwei
+    },
+    mainnet: {
+      accounts: normalizedPrivateKey ? [normalizedPrivateKey] : [],
+      chainId: 1,
+      url: `https://mainnet.infura.io/v3/${INFURA_API_KEY}`,
+      gasPrice: 20000000000, // 20 gwei
     },
   },
   paths: {
@@ -78,8 +85,9 @@ const config: HardhatUserConfig = {
       // https://hardhat.org/hardhat-network/#solidity-optimizer-support
       optimizer: {
         enabled: true,
-        runs: 800,
+        runs: 1000,
       },
+      viaIR: true,
       evmVersion: "cancun",
     },
   },
