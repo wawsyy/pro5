@@ -24,6 +24,8 @@ export const SalaryCompareDemo = () => {
 
   const [salaryInput, setSalaryInput] = useState<string>("");
   const [compareAddress, setCompareAddress] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isComparing, setIsComparing] = useState<boolean>(false);
 
   // FHEVM instance
   const {
@@ -174,11 +176,16 @@ export const SalaryCompareDemo = () => {
             <button
               className={buttonClass}
               disabled={!salaryCompare.canSubmit || !salaryInput || parseInt(salaryInput) <= 0}
-              onClick={() => {
+              onClick={async () => {
                 const salary = parseInt(salaryInput);
                 if (salary > 0) {
-                  salaryCompare.submitSalary(salary);
-                  setSalaryInput("");
+                  setIsSubmitting(true);
+                  try {
+                    await salaryCompare.submitSalary(salary);
+                    setSalaryInput("");
+                  } finally {
+                    setIsSubmitting(false);
+                  }
                 }
               }}
             >
@@ -241,9 +248,14 @@ export const SalaryCompareDemo = () => {
             <button
               className={buttonClass}
               disabled={!salaryCompare.canCompare || !compareAddress}
-              onClick={() => {
+              onClick={async () => {
                 if (compareAddress) {
-                  salaryCompare.compareSalaries(compareAddress);
+                  setIsComparing(true);
+                  try {
+                    await salaryCompare.compareSalaries(compareAddress);
+                  } finally {
+                    setIsComparing(false);
+                  }
                 }
               }}
             >
