@@ -76,3 +76,21 @@ task("task:getComparisonResult")
     console.log(`Result (${user1} > ${user2}): ${decryptedResult}`);
   });
 
+task("task:batchCompareSalaries")
+  .addVariadicPositionalParam("others", "List of addresses to compare with")
+  .setAction(async function (taskArguments: TaskArguments, { ethers }) {
+    const { others } = taskArguments;
+    const SalaryCompare = await ethers.getContractFactory("SalaryCompare");
+    const salaryCompare = await SalaryCompare.deploy();
+    await salaryCompare.waitForDeployment();
+
+    const [signer] = await ethers.getSigners();
+
+    console.log(`Batch comparing salary of ${signer.address} with ${others.length} users...`);
+
+    const tx = await salaryCompare.batchCompareSalaries(others);
+    await tx.wait();
+
+    console.log(`Batch comparison completed! Transaction: ${tx.hash}`);
+  });
+
