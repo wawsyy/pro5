@@ -160,16 +160,23 @@ Retrieve your own encrypted salary.
 #### `compareSalaries(address otherUser)`
 Compare your salary with another user's salary.
 
+#### `batchCompareSalaries(address[] calldata otherUsers)`
+Compare your salary with multiple users in a single transaction.
+
 #### `getComparisonResult(address user1, address user2) returns (ebool)`
 Get the encrypted comparison result.
 
 #### `updateSalary(externalEuint32 inputEuint32, bytes calldata inputProof)`
 Update your encrypted salary.
 
+#### `hasComparison(address user1, address user2) returns (bool)`
+Check if a comparison has been performed between two users.
+
 ### Events
 
 - `SalarySubmitted(address indexed user)`
 - `SalaryCompared(address indexed user1, address indexed user2)`
+- `SalaryUpdated(address indexed user)`
 
 ## 🤝 Contributing
 
