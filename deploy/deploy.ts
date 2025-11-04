@@ -8,6 +8,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const deployedSalaryCompare = await deploy("SalaryCompare", {
     from: deployer,
     log: true,
+    gasLimit: 3000000,
+    waitConfirmations: 1,
   });
 
   console.log(`SalaryCompare contract: `, deployedSalaryCompare.address);
