@@ -66,6 +66,18 @@ const config: HardhatUserConfig = {
       url: `https://mainnet.infura.io/v3/${INFURA_API_KEY}`,
       gasPrice: 20000000000, // 20 gwei
     },
+    polygon: {
+      accounts: normalizedPrivateKey ? [normalizedPrivateKey] : [],
+      chainId: 137,
+      url: `https://polygon-mainnet.infura.io/v3/${INFURA_API_KEY}`,
+      gasPrice: 40000000000, // 40 gwei
+    },
+    arbitrum: {
+      accounts: normalizedPrivateKey ? [normalizedPrivateKey] : [],
+      chainId: 42161,
+      url: `https://arbitrum-mainnet.infura.io/v3/${INFURA_API_KEY}`,
+      gasPrice: 5000000, // 0.005 gwei
+    },
   },
   paths: {
     artifacts: "./artifacts",
