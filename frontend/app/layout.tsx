@@ -6,6 +6,13 @@ import { Header } from "@/components/Header";
 export const metadata: Metadata = {
   title: "Encrypted Salary Compare",
   description: "Compare salaries privately using Fully Homomorphic Encryption",
+  keywords: ["FHE", "privacy", "salary comparison", "blockchain", "encryption", "web3"],
+  authors: [{ name: "Encrypted Salary Compare Team" }],
+  openGraph: {
+    title: "Encrypted Salary Compare",
+    description: "Compare salaries privately using Fully Homomorphic Encryption",
+    type: "website",
+  },
 };
 
 export default async function RootLayout({
