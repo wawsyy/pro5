@@ -24,8 +24,6 @@ export const SalaryCompareDemo = () => {
 
   const [salaryInput, setSalaryInput] = useState<string>("");
   const [compareAddress, setCompareAddress] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [isComparing, setIsComparing] = useState<boolean>(false);
 
   // FHEVM instance
   const {
@@ -179,13 +177,8 @@ export const SalaryCompareDemo = () => {
               onClick={async () => {
                 const salary = parseInt(salaryInput);
                 if (salary > 0) {
-                  setIsSubmitting(true);
-                  try {
-                    await salaryCompare.submitSalary(salary);
-                    setSalaryInput("");
-                  } finally {
-                    setIsSubmitting(false);
-                  }
+                  await salaryCompare.submitSalary(salary);
+                  setSalaryInput("");
                 }
               }}
             >
@@ -250,12 +243,7 @@ export const SalaryCompareDemo = () => {
               disabled={!salaryCompare.canCompare || !compareAddress}
               onClick={async () => {
                 if (compareAddress) {
-                  setIsComparing(true);
-                  try {
-                    await salaryCompare.compareSalaries(compareAddress);
-                  } finally {
-                    setIsComparing(false);
-                  }
+                  await salaryCompare.compareSalaries(compareAddress);
                 }
               }}
             >
@@ -352,6 +340,7 @@ function StepCard({ number, title, description, icon }: {
       <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-2xl font-bold mb-3 shadow-lg">
         {icon}
       </div>
+      <p className="text-sm font-semibold text-blue-600 mb-1">Step {number}</p>
       <h4 className="text-lg font-semibold text-gray-800 mb-2">{title}</h4>
       <p className="text-sm text-gray-600">{description}</p>
     </div>
