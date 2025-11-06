@@ -12,6 +12,7 @@ import { MetaMaskEthersSignerProvider } from "@/hooks/metamask/useMetaMaskEthers
 import "@rainbow-me/rainbowkit/styles.css";
 
 const queryClient = new QueryClient();
+const defaultMockChains: Readonly<Record<number, string>> = {};
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -20,7 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <RainbowKitProvider>
           <InMemoryStorageProvider>
             <MetaMaskProvider>
-              <MetaMaskEthersSignerProvider>
+              <MetaMaskEthersSignerProvider initialMockChains={defaultMockChains}>
                 {children}
               </MetaMaskEthersSignerProvider>
             </MetaMaskProvider>
