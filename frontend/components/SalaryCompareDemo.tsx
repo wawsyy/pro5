@@ -127,7 +127,7 @@ export const SalaryCompareDemo = () => {
             <InfoRow label="Instance" value={fhevmInstance ? "✓ Ready" : "✗ Not Ready"} 
                      valueClass={fhevmInstance ? "text-green-600 font-semibold" : "text-red-600"} />
             <InfoRow label="Status" value={fhevmStatus} />
-            <InfoRow label="Error" value={fhevmError ?? "None"} />
+            <InfoRow label="Error" value={fhevmError ? fhevmError.message : "None"} />
           </div>
         </div>
 
